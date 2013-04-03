@@ -1,4 +1,4 @@
-  <html>                                                                  
+ <html>                                                                  
  <head>                                                                  
  <script type="text/javascript" src="jquery-1.7.1.min.js"></script>          
  <script type="text/javascript">                                         
@@ -6,9 +6,7 @@
  </script>                                                               
  </head>                                                                 
  <body>  
-
-
-<table border="1">
+ <table border="1">
 <tr>
 <td> 
 
@@ -20,8 +18,8 @@
 import_date="2012-05-03T17:03:06.300+01:00" sourcesystem_cd="BRICCS" 
 update_date="2012-05-03T17:03:06.300+01:00" upload_id="1">
 <event_id 
-source="BRICCS">BPt00000025_2012-05-03T17:03:06.007+01:00</event_id>
-<patient_id source="BRICCS">BPt00000025</patient_id>
+source="BRICCS">BPt00000220_2012-05-03T17:03:06.007+01:00</event_id>
+<patient_id source="BRICCS">BPt00000220</patient_id>
 <param column="ACTIVE_STATUS_CD" name="active status">F</param>
 <param column="INOUT_CD" name="">@</param>
 <param column="LOCATION_CD" name="">@</param>
@@ -29,14 +27,14 @@ source="BRICCS">BPt00000025_2012-05-03T17:03:06.007+01:00</event_id>
 <start_date>2012-04-24T00:00:00.000+01:00</start_date>
 <end_date>@</end_date>
 </event>
-</pdo:event_set>
+ </pdo:event_set>
 <pdo:pid_set>
 <pid>
 <patient_id download_date="2012-05-03T17:03:06.300+01:00" 
 import_date="2012-05-03T17:03:06.300+01:00" source="BRICCS" 
 sourcesystem_cd="BRICCS" status="Active" 
 update_date="2012-05-03T17:03:06.300+01:00" 
-upload_id="1">BPt00000025</patient_id>
+upload_id="1">BPt00000220</patient_id>
 </pid>
 </pdo:pid_set>
 <pdo:eid_set>
@@ -45,14 +43,14 @@ upload_id="1">BPt00000025</patient_id>
 import_date="2012-05-03T17:03:06.300+01:00" source="BRICCS" 
 sourcesystem_cd="BRICCS" status="Active" 
 update_date="2012-05-03T17:03:06.300+01:00" 
-upload_id="1">BPt00000025_2012-05-03T17:03:06.007+01:00</event_id>
+upload_id="1">BPt00000220_2012-05-03T17:03:06.007+01:00</event_id>
 </eid>
 </pdo:eid_set>
 <pdo:patient_set>
 <patient download_date="2012-05-03T17:03:06.300+01:00" 
 import_date="2012-05-03T17:03:06.300+01:00" sourcesystem_cd="BRICCS" 
 update_date="2012-05-03T17:03:06.300+01:00" upload_id="1">
-<patient_id source="BRICCS">BPt00000025</patient_id>
+<patient_id source="BRICCS">BPt00000220</patient_id>
 <param column="vital_status_cd" name="date interpretation code">N</param>
 <param column="birth_date" 
 name="birthdate">1972-04-25T00:00:00.000+01:00</param>
@@ -61,17 +59,37 @@ name="birthdate">1972-04-25T00:00:00.000+01:00</param>
 <param column="sex_cd" name="sex">MALE</param>
 </patient>
 </pdo:patient_set>
+<pdo:observation_set>
+<observation download_date="2012-12-21T00:40:23.689+01:00" import_date="2012-12-21T00:40:23.689+01:00" sourcesystem_cd="BRICCS"  update_date="2012-12-21T00:40:23.689+01:00" upload_id="1">
+<event_id source="BRICCS">BPt00000220_2012-05-03T17:03:06.007+01:00</event_id>
+<patient_id source="BRICCS">BPt00000220</patient_id>
+<concept_cd name="BRICCS">CAT:S.Serum.volume_aliquots</concept_cd>
+<observer_cd source="BRICCS">@</observer_cd>
+<start_date>2010-09-13T00:12:01.800+01:00</start_date>
+<modifier_cd name="missing value">@</modifier_cd>
+<valuetype_cd>N</valuetype_cd>
+<tval_char>E</tval_char>
+<nval_num units="ml">0.5</nval_num>
+<valueflag_cd name="Low">L</valueflag_cd>
+<quantity_num>@</quantity_num>
+<units_cd>ml</units_cd>
+<end_date>@</end_date>
+<location_cd name="missing value">@</location_cd>
+</observation>
+</pdo:observation_set>
 </pdo:patient_data>
 </textarea><br>
-
 </td>
-
 </tr>
 <tr>
 <td>
-<input type="button" id="myButton" value="click me" /> 
+<input type="text" id="civiId" value = "X"> 
 </td>
-
+</tr>
+<tr>
+<td>
+<input type="button" id="myButton" value="Submit" /> 
+</td>
 </tr>
 </table> 
 
@@ -79,12 +97,6 @@ name="birthdate">1972-04-25T00:00:00.000+01:00</param>
 
 <script>
 
-$('#myButton').click(function(){
-    var xmlContent = $('#xmlv').val();
-    //$.ajax({  contentType: "application/xml; charset=utf-8", type: "POST", url: "http://bru2.brisskit.le.ac.uk:8080/i2b2WS/rest/service/pdo", data: { xml : incomingXML}, success: function(msg) {  alert(msg); }, });
-    $.ajax({  contentType: "application/xml; charset=utf-8", type: "POST", url: "http://" + window.location.hostname  + ":8080/i2b2WS/rest/service/pdo", data: {incomingXML: xmlContent, activity_id: "X"}, success: function(msg) {  alert(msg); }, });
-    
-}); 
 
 //$.post("http://localhost:8080/Myi2b2WS2/rest/test/postjsonjson", {"incomingXML":incomingXML}, function (response){alert(response);});
 //$.get("http://localhost:8080/Myi2b2WS2/rest/test/getjsonjson", {"incomingXML":incomingXML}, function (response){alert(response);});
@@ -92,8 +104,12 @@ $('#myButton').click(function(){
 //$.post("http://localhost:8080/Myi2b2WS2/rest/test/xmltest", {"incomingXML":incomingXML}, function (response){alert(response);});
 
 //$.ajax({  contentType: "application/xml; charset=utf-8", type: "POST", url: "http://localhost:8080/Myi2b2WS2/rest/test/xmltest2", data: { xml : incomingXML}, success: function(msg) {  alert(msg); }, });
+$('#myButton').click(function(){
+var xmlContent = $('#xmlv').val();
+var civiId = $('#civiId').val();
 
-
+$.ajax({  contentType: "application/xml; charset=utf-8", type: "POST", url: "http://" + window.location.hostname  + ":8080/i2b2WS/rest/service/pdo", data: {incomingXML: xmlContent, activity_id: civiId}, success: function(msg) {  alert(msg); }, });
+}); 
 </script>                                        
 </body>                                                                 
 </html>

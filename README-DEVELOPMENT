@@ -1,0 +1,46 @@
+*==================================================================
+* To build this project ready for development within Eclipse.
+*==================================================================
+(0) You must have Maven installed.
+    Your settings.xml file must be the standard profiled
+    settings.xml supplied with brisskit
+    (ie: one pointing to the brisskit maven repository manager)
+
+(1) Ideally, you should have the J2EE version of Eclipse.
+    It makes for easier development and testing of Web Services.
+    
+(2) Within Eclipse, ensure you have the M2_REPO classpath variable set
+    to point to your local maven repository (eg: /home/jblogs/.m2/repository) 
+
+(3) Book out this project from svn.
+ 
+(4) Run the install.sh script, which will set up:
+    (a) the Eclipse classpath
+    (b) the WebContent/WEB-INF/lib directory
+    (c) and install the war file in your local maven repo.
+    
+ Repeat the latter step as often as needed.
+    
+*==================================================================
+* To deploy the artifact to the brisskit remote repository.
+*==================================================================
+(1) Run the deploy.sh script, which will set up:
+    (a) the Eclipse classpath
+    (b) the WebContent/WEB-INF/lib directory
+    (c) and deploy the war file to the brisskit repo.
+
+*==================================================================
+* NOTES...
+*==================================================================
+(1) The artifact name is governed by the pom's gav coordinates.
+    So you will end up with something named like onyxWS-SNAPSHOT-2.0.war
+    and this will be its install and deploy coordinates within the repositories.
+    In order to run this within a test or live situation, you may need
+    to rename the artifact (eg: to i2b2WS.war) to keep the standard URL. 
+(2) Try not to commit class files, jars and wars to SVN.
+(3) To deploy you will need authority upon the machine hosting the maven repo.
+    Best to have a public/private ssh key setup for this.
+(4) The webservice.properties file is an example/test version only.
+    The real one exists in the i2b2 install project.
+    
+    

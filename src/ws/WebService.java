@@ -39,8 +39,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import uk.org.briccs.dataimport.ImportPdoWS;
-import ws.utils.ConnectionTokens;
+import org.brisskit.i2b2.dataimport.ImportPdo ;
 import ws.utils.GetConnection;
 import ws.utils.Ontology;
 import ws.utils.StreamGobbler;
@@ -68,35 +67,77 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 @Path("/service")
 public class WebService {
-
 	final static Logger logger = LogManager.getLogger(WebService.class);
+	
+	// Standardised (by convention) path to the webservice.properties file:
+	final static String PROPERTIES_PATH = "/var/local/brisskit/i2b2/webservice.properties" ;
+	final static String CIVI_PROPERTIES_PATH = "/etc/brisskit/civicrm_integration.cfg" ;
+	
+	
+	// These are the keys (or partial keys) to properties held within the webservice.properties file...
+	final static String ENVIRONMENT = "env" ;
+	final static String DBNAME = "db_name" ;
+	final static String DBURL = "db_url" ;
+	final static String SOURCE_SYSTEM = "sourcesystem" ;	
+	final static String IMPORTPDO_INPUT_PATH = "importpdo.input.path" ;
+	final static String IMPORTPDO_LOG4J_CONFIG = "importpdo.log4j.configuration" ;
+	final static String IMPORTPDO_ENDORSED_LIBS = "importpdo.endorsed.lib" ;
+	final static String IMPORTPDO_CONFIG = "importpdo.config" ;
+	final static String TEST_INVOCATION = "test.invocation" ;
+	
+	final static String CIVIURL = "civiurl" ;
+	final static String CIVI_REST_LOCATION = "civi_rest_location";
+	final static String CIVI_INTEGRATION_USERNAME = "civi_integration_username";
+	final static String CIVI_INTEGRATION_PASSWORD = "civi_integration_password";
+	final static String CIVI_INTEGRATION_API_KEY = "civi_integration_api_key";
+	final static String CIVI_SITE_API_KEY = "civi_site_api_key";
+
+	
+	
 	static Properties prop = new Properties();
 	static String db_name;
 	static String db_url;
 	static String sourcesystem;
 	static String civiurl;
+	
+	
+	static Properties prop_civi = new Properties();
 	static String name;
 	static String pass;
 	static String key;
+	static String site_key;
 	
-	static String rest_location = "/civicrm/sites/all/modules/civicrm/extern/rest.php";
-	//static String rest_location_orig = "/civicrm/civicrm/ajax/rest";
 	
 	static 
 	{
-		try {
-			prop.load(new FileInputStream("/local/webservice.properties"));
-			String env = prop.getProperty("env");
+		try {		
+			prop.load(new FileInputStream(PROPERTIES_PATH) );
+			String env = prop.getProperty( ENVIRONMENT );
 						
-			db_name = prop.getProperty(env + "." + "db_name");
-			db_url  = prop.getProperty(env + "." + "db_url");
-			sourcesystem = prop.getProperty(env + "." + "sourcesystem");
-			civiurl  = prop.getProperty(env + "." + "civiurl");
-			name  = prop.getProperty(env + "." + "name");
-			pass  = prop.getProperty(env + "." + "pass");
-			key  = prop.getProperty(env + "." + "key");
+			db_name = prop.getProperty( env + "." + DBNAME );
+			db_url  = prop.getProperty( env + "." + DBURL );
+			sourcesystem = prop.getProperty( env + "." + SOURCE_SYSTEM );
+			civiurl  = prop.getProperty( env + "." + CIVIURL );
 			
+	
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		
+		try {
+			prop_civi.load(new FileInputStream(CIVI_PROPERTIES_PATH) );
+			String env = prop_civi.getProperty( ENVIRONMENT );
+						
+			name = prop_civi.getProperty( CIVI_INTEGRATION_USERNAME );
+			pass  = prop_civi.getProperty( CIVI_INTEGRATION_PASSWORD );
+			key = prop_civi.getProperty( CIVI_INTEGRATION_API_KEY );
+			site_key = prop_civi.getProperty( CIVI_SITE_API_KEY );
 			
+	
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -113,14 +154,14 @@ public class WebService {
 	public String postOnlyXMLi2b2(@PathParam("incomingXML") String incomingXML) {
 		return "{tttt,gggg}";
 	}
-	
+
 	@GET
 	@Path("i2b2callback3/{incomingXML}")
 	@Produces({ MediaType.TEXT_HTML, MediaType.TEXT_PLAIN })
 	public String postOnlyXMLi2b3(@PathParam("incomingXML") String incomingXML) {
 		return "callbacki2b2({\"status\" : \"OK\"})";
 	}
-		
+	
 	@GET
 	@Path("i2b2callback1/{incomingXML}")
 	@Produces("text/html")
@@ -269,7 +310,8 @@ public class WebService {
 		logger.info("responseoptionValueService............"
 				+ createGroupValueService);
 
-		int group_id = JsonPath.read(createGroupValueService, "$.values[0].id");
+		Integer iGroup_id = JsonPath.read(createGroupValueService, "$.values[0].id") ;
+		int group_id = iGroup_id.intValue() ;
 
 		logger.info("group_id............" + group_id);
 		
@@ -307,7 +349,6 @@ public class WebService {
 		//return "success";
 	}
 
-
 	@GET
 	@Path("disp/{val}")
 	@Produces("text/plain")
@@ -336,29 +377,26 @@ public class WebService {
 		logger.info("CONTENT OF XML " + incomingXML);
 		logger.info(" ");
 		logger.info("activity_id : " + activity_id);
-
+		
+		//
 		// Current Date time in Local time zone
-		SimpleDateFormat localDateFormat = new SimpleDateFormat(
-				"yyyyMMddHHmmss");
-		String date = localDateFormat.format(new Date());
+		SimpleDateFormat localDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		String date = localDateFormat.format(new Date());	
+		//
+		// Locate directory where input PDO will be passed to the ImportPdo programme...
+		String pdoDirectoryPath = prop.getProperty( IMPORTPDO_INPUT_PATH ) ;
+		String pdoFullPathName = pdoDirectoryPath + System.getProperty( "file.separator" ) + "pdo" + date + ".xml" ;
 
 		if (str.contains("xml=")) {
 			str = str.substring(str.indexOf("xml=") + 4);
 		}
-
+		
 		try {
-			// String param2AfterDecoding = URLDecoder.decode(str, "UTF-8");
-			// System.out.println("param2 after decoding:" +
-			// param2AfterDecoding);
-
-			// FileWriter fstream = new
-			// FileWriter("C:\\Documents and Settings\\Jupiter1\\workspace\\Myi2b2WS2\\src\\files\\pdo"+date+".xml");
 
 			logger.info(" ");
-			logger.info("FILE NAME : " + "/local/testpdo/pdo" + date + ".xml");
+			logger.info("FILE NAME : " + pdoFullPathName );
 
-			FileWriter fstream = new FileWriter("/local/testpdo/pdo" + date
-					+ ".xml");
+			FileWriter fstream = new FileWriter( pdoFullPathName );
 			BufferedWriter out = new BufferedWriter(fstream);
 			// out.write(param2AfterDecoding);
 			out.write(str);
@@ -369,20 +407,19 @@ public class WebService {
 
 			/** This is on a per PDO basis **/
 
-			ImportPdoWS importer = new ImportPdoWS();
-
-			boolean b = importer.setPDOFile("/local/testpdo/pdo" + date
-					+ ".xml");
+			ImportPdo importer = new ImportPdo();
 
 			String[] args = new String[6];
 
-			args[0] = "-Dlog4j.configuration=file:///local/i2b2-procedures-2.0-development/config/log4j.properties";
-			args[1] = "-Djava.endorsed.dirs=/local/i2b2-procedures-2.0-development/endorsed-lib";
+			args[0] = "-Dlog4j.configuration=file://" + prop.getProperty( IMPORTPDO_LOG4J_CONFIG ) ;
+			args[1] = "-Djava.endorsed.dirs=" + prop.getProperty( IMPORTPDO_ENDORSED_LIBS ) ;
+			//
+			// Not sure whether this setting has been overlooked somewhere.
+			// It is not used by the ImportPdo.
 			args[2] = "-DFRClearTempTables=true";
-			args[3] = "-config=/local/i2b2-procedures-2.0-development/config/config.properties";
-			args[4] = "-import="; // this is passed in above, created later as a
-									// file
-			args[5] = "-append=false";
+			args[3] = "-config=" + prop.getProperty( IMPORTPDO_CONFIG ) ;
+			args[4] = "-import=" + pdoFullPathName ; 
+			args[5] = "-append=false" ;
 
 			boolean good = importer.retrieveArgs(args);
 			if (!good) {
@@ -618,19 +655,17 @@ public class WebService {
 	}
 	
 	
-	
-	
 	/************************************/
 	/* CIVI CALLS                       */
 	/************************************/
 		
 	private static URI getOptionGroupBaseURI(String api_key, String PHPSESSID, String key) {
 		logger.info("getOptionGroupBaseURI ");
-		logger.info("http://"+ civiurl + rest_location + "?json=1&debug=1&version=3&entity=OptionGroup&action=get&name=activity_status" + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID);
+		logger.info("http://"+ civiurl + CIVI_REST_LOCATION + "?json=1&debug=1&version=3&entity=OptionGroup&action=get&name=activity_status" + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID);
 			
 		return UriBuilder
 				.fromUri(
-						"http://" + civiurl +  rest_location + "?json=1&debug=1&version=3&entity=OptionGroup&action=get&name=activity_status" + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID)
+						"http://" + civiurl +  CIVI_REST_LOCATION + "?json=1&debug=1&version=3&entity=OptionGroup&action=get&name=activity_status" + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID)
 				.build();
 	}
 
@@ -639,12 +674,12 @@ public class WebService {
 		logger.info("option_group_id = " + option_group_id);
 		logger.info("status = " + status);
 		
-		logger.info("http://" + civiurl +  rest_location + "?json=1&debug=1&version=3&entity=OptionValue&action=get&option_group_id="
+		logger.info("http://" + civiurl +  CIVI_REST_LOCATION + "?json=1&debug=1&version=3&entity=OptionValue&action=get&option_group_id="
 				+ option_group_id + "&name=" + status + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID);
 
 		return UriBuilder
 				.fromUri(
-						"http://" + civiurl +  rest_location + "?json=1&debug=1&version=3&entity=OptionValue&action=get&option_group_id="
+						"http://" + civiurl +  CIVI_REST_LOCATION + "?json=1&debug=1&version=3&entity=OptionValue&action=get&option_group_id="
 								+ option_group_id + "&name=" + status + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID).build();
 
 	}
@@ -654,12 +689,12 @@ public class WebService {
 		logger.info("activity_id = " + activity_id);
 		logger.info("status_id = " + status_id);
 				
-		logger.info("http://" + civiurl +  rest_location + "?json=1&debug=1&entity=Activity&action=update&status_id="
+		logger.info("http://" + civiurl +  CIVI_REST_LOCATION + "?json=1&debug=1&entity=Activity&action=update&status_id="
 				+ status_id + "&id=" + activity_id + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID);
 
 		return UriBuilder
 				.fromUri(
-						"http://" + civiurl +  rest_location + "?json=1&debug=1&entity=Activity&action=update&status_id="
+						"http://" + civiurl +  CIVI_REST_LOCATION + "?json=1&debug=1&entity=Activity&action=update&status_id="
 								+ status_id
 								+ "&id="
 								+ activity_id
@@ -683,12 +718,12 @@ public class WebService {
 	private static URI createGroup(String groupname, String api_key, String PHPSESSID, String key) {
 
 		logger.info(" ***************" + groupname);
-		logger.info("http://" + civiurl +  rest_location + "?json=1&sequential=1&debug=1&entity=Group&action=create&title="
+		logger.info("http://" + civiurl +  CIVI_REST_LOCATION + "?json=1&sequential=1&debug=1&entity=Group&action=create&title="
 				+ groupname + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID);
 
 		return UriBuilder
 				.fromUri(
-						"http://" + civiurl +  rest_location + "?json=1&sequential=1&debug=1&entity=Group&action=create&title="
+						"http://" + civiurl +  CIVI_REST_LOCATION + "?json=1&sequential=1&debug=1&entity=Group&action=create&title="
 								+ groupname + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID).build();
 	}
 
@@ -697,34 +732,29 @@ public class WebService {
 
 		logger.info(" ***************" + brisskitid);
 		//logger.info("http://" + civiurl +  rest_location_orig + "?json=1&sequential=1&debug=1&entity=Brisskit&action=get&id=" + brisskitid);
-		logger.info("http://" + civiurl +  rest_location + "?json=1&sequential=1&debug=1&entity=Contact&action=get&custom_2=" + brisskitid + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID);
+		logger.info("http://" + civiurl +  CIVI_REST_LOCATION + "?json=1&sequential=1&debug=1&entity=Contact&action=get&custom_2=" + brisskitid + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID);
 
 		// Ensure that custom_2 is correct, could be custom_3 4 5 6, we dont know
 		///civicrm/civicrm/ajax/rest?json=1&sequential=1&debug=1&&entity=CustomField&action=get&name=BRISSkit_ID
 				
 		
 		return UriBuilder
-				.fromUri("http://" + civiurl +  rest_location + "?json=1&sequential=1&debug=1&entity=Contact&action=get&custom_2=" + brisskitid + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID).build();
+				.fromUri("http://" + civiurl +  CIVI_REST_LOCATION + "?json=1&sequential=1&debug=1&entity=Contact&action=get&custom_2=" + brisskitid + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID).build();
 	}
 
 	private static URI addContactToGroup(int groupid, String contactid, String api_key, String PHPSESSID, String key) {
 
 		logger.info(groupid + " ***************" + contactid);
-		logger.info("http://" + civiurl +  rest_location + "?json=1&sequential=1&debug=1&entity=GroupContact&action=create&group_id="
+		logger.info("http://" + civiurl +  CIVI_REST_LOCATION + "?json=1&sequential=1&debug=1&entity=GroupContact&action=create&group_id="
 				+ groupid + "&contact_id=" + contactid + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID);
 
 		return UriBuilder
 				.fromUri(
-						"http://" + civiurl +  rest_location + "?json=1&sequential=1&debug=1&entity=GroupContact&action=create&group_id="
+						"http://" + civiurl +  CIVI_REST_LOCATION + "?json=1&sequential=1&debug=1&entity=GroupContact&action=create&group_id="
 								+ groupid + "&contact_id=" + contactid + "&key=" + key +"&api_key=" + api_key + "&PHPSESSID=" + PHPSESSID).build();
 	}
-
 	
-	
-	
-
-	
-	/********** TESTS **********/
+	/********** TESTS **********/	
 
 	@GET
 	@Path("catissue")
@@ -964,4 +994,12 @@ public class WebService {
 		 
 	}
 	
+	
+
+	
+	
+	
+
+
+
 }

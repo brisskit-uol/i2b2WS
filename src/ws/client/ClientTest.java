@@ -89,8 +89,8 @@ public class ClientTest {
     }  
   
     private static URI getBaseURI() {  
-        //return UriBuilder.fromUri("http://localhost:8080/i2b2WS/rest").build();  
-        return UriBuilder.fromUri("http://bru2.brisskit.le.ac.uk:8080/i2b2WS/rest").build();
+        return UriBuilder.fromUri("http://localhost:8080/i2b2WS/rest").build();  
+//        return UriBuilder.fromUri("http://bru2.brisskit.le.ac.uk:8080/i2b2WS/rest").build();
         //return UriBuilder.fromUri("http://i2b2:8080/i2b2WS/rest").build();
         
     }  
