@@ -7,7 +7,7 @@
 	    |  Please consult the project's README
 	    +-->
 	<name>Integration Web Service for i2b2</name>
-	<version>1.0-RC1</version>
+	<version>1.0-RC2</version>
 
 	<description></description>
 
@@ -17,12 +17,12 @@
 	<distributionManagement>
 		<repository>
 			<id>nexus</id>
-			<name>Brisskit Maven Snapshots</name>
+			<name>Brisskit Maven Releases</name>
 			<url>scpexe://maven.brisskit.org/var/local/brisskit/sonatype-work/nexus/storage/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>nexus</id>
-			<name>Brisskit Maven Releases</name>
+			<name>Brisskit Maven Snapshots</name>
 			<url>scpexe://maven.brisskit.org/var/local/brisskit/sonatype-work/nexus/storage/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
