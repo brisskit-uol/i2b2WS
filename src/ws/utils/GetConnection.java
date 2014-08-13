@@ -9,43 +9,47 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.NotImplementedException;
+
 public final class GetConnection {
 
 		  /** Uses JNDI and Datasource (preferred style).   */
 		  static public Connection getJNDIConnection(){
-		    String DATASOURCE_CONTEXT = "java:comp/env/jdbc/blah";
-		    
-		    Connection result = null;
-		    try {
-		      Context initialContext = new InitialContext();
-		      if ( initialContext == null){
-		        log("JNDI problem. Cannot get InitialContext.");
-		      }
-		      DataSource datasource = (DataSource)initialContext.lookup(DATASOURCE_CONTEXT);
-		      if (datasource != null) {
-		        result = datasource.getConnection();
-		      }
-		      else {
-		        log("Failed to lookup datasource.");
-		      }
-		    }
-		    catch ( NamingException ex ) {
-		      log("Cannot get connection: " + ex);
-		    }
-		    catch(SQLException ex){
-		      log("Cannot get connection: " + ex);
-		    }
-		    return result;
+			  
+			  throw new NotImplementedException() ;
+			  
+//		    String DATASOURCE_CONTEXT = "java:comp/env/jdbc/blah";
+//		    
+//		    Connection result = null;
+//		    try {
+//		      Context initialContext = new InitialContext();
+//		      if ( initialContext == null){
+//		        log("JNDI problem. Cannot get InitialContext.");
+//		      }
+//		      DataSource datasource = (DataSource)initialContext.lookup(DATASOURCE_CONTEXT);
+//		      if (datasource != null) {
+//		        result = datasource.getConnection();
+//		      }
+//		      else {
+//		        log("Failed to lookup datasource.");
+//		      }
+//		    }
+//		    catch ( NamingException ex ) {
+//		      log("Cannot get connection: " + ex);
+//		    }
+//		    catch(SQLException ex){
+//		      log("Cannot get connection: " + ex);
+//		    }
+//		    return result;
 		  }
 
 		  /** Uses DriverManager.  */
-		  static public Connection getSimpleConnectionSQL() {
+		  static public Connection getSimpleConnectionSQL( String userName
+				                                         , String password ) {
 		    //See your driver documentation for the proper format of this string :
 		    String DB_CONN_STRING = "jdbc:mysql://localhost:3306/pm";
 		    //Provided by your driver documentation. In this case, a MySql driver is used : 
 		    String DRIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
-		    String USER_NAME = "root";
-		    String PASSWORD = "root";
 		    
 		    Connection result = null;
 		    try {
@@ -56,7 +60,7 @@ public final class GetConnection {
 		    }
 
 		    try {
-		      result = DriverManager.getConnection(DB_CONN_STRING, USER_NAME, PASSWORD);
+		      result = DriverManager.getConnection(DB_CONN_STRING, userName, password ) ;
 		    }
 		    catch (SQLException e){
 		       log( "Driver loaded, but cannot connect to db: " + DB_CONN_STRING);
@@ -65,7 +69,9 @@ public final class GetConnection {
 		  }
 		  
 		  /** Uses DriverManager.  */
-		  static public Connection getSimpleConnectionMSSQL(String url) {
+		  static public Connection getSimpleConnectionMSSQL( String url 
+				                                           , String userName
+				                                           , String password ) {
 		    //See your driver documentation for the proper format of this string :
 			//jdbc:sqlserver://localhost:1433;databaseName=EMPLOYEE;selectMethod=cursor
 			  
@@ -81,13 +87,6 @@ public final class GetConnection {
 		    
 		    String DRIVER_CLASS_NAME = "net.sourceforge.jtds.jdbc.Driver";
 		    
-		    
-		    
-		    //String USER_NAME = "test";
-		    //String PASSWORD = "test";
-		    String USER_NAME = "sa";
-		    String PASSWORD = "root";
-		    
 		    Connection result = null;
 		    try {
 		       Class.forName(DRIVER_CLASS_NAME).newInstance();
@@ -97,7 +96,7 @@ public final class GetConnection {
 		    }
 
 		    try {
-		      result = DriverManager.getConnection(DB_CONN_STRING, USER_NAME, PASSWORD);
+		      result = DriverManager.getConnection(DB_CONN_STRING, userName, password ) ;
 		    }
 		    catch (SQLException e){
 		       log( "Driver loaded, but cannot connect to db: " + DB_CONN_STRING);
@@ -105,10 +104,7 @@ public final class GetConnection {
 		    return result;
 		  }  
 		  
-		  
-		  
-		  
-		  
+		  		  
 		  private static void log(Object aObject){
 			    System.out.println(aObject);
 			  }

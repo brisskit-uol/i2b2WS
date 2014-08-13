@@ -1,3 +1,7 @@
+*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+* NB: Version 1.1 and above are aimed at JBoss version 1.7 and above.
+*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 *==================================================================
 * To build this project ready for development within Eclipse.
 *==================================================================
@@ -33,7 +37,7 @@
 * NOTES...
 *==================================================================
 (1) The artifact name is governed by the pom's gav coordinates.
-    So you will end up with something named like onyxWS-SNAPSHOT-2.0.war
+    So you will end up with something named like onyxWS-1.1-SNAPSHOT.war
     and this will be its install and deploy coordinates within the repositories.
     In order to run this within a test or live situation, you may need
     to rename the artifact (eg: to i2b2WS.war) to keep the standard URL. 
@@ -42,5 +46,6 @@
     Best to have a public/private ssh key setup for this.
 (4) The webservice.properties file is an example/test version only.
     The real one exists in the i2b2 install project.
-    
+(5) The web.xml file has a workaround to eliminate errors (in JBoss 1.7.x)
+    that occurr on deployment. You can see the original in the notes folder.
     

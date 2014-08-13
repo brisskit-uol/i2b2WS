@@ -78,6 +78,8 @@ public class WebService {
 	final static String ENVIRONMENT = "env" ;
 	final static String DBNAME = "db_name" ;
 	final static String DBURL = "db_url" ;
+	final static String DBUSER_NAME = "db.username" ;
+	final static String DBUSER_PASSWORD = "db.userpassword" ; 
 	final static String SOURCE_SYSTEM = "sourcesystem" ;	
 	final static String IMPORTPDO_INPUT_PATH = "importpdo.input.path" ;
 	final static String IMPORTPDO_LOG4J_CONFIG = "importpdo.log4j.configuration" ;
@@ -97,6 +99,8 @@ public class WebService {
 	static Properties prop = new Properties();
 	static String db_name;
 	static String db_url;
+	static String db_username ;
+	static String db_userpassword ;
 	static String sourcesystem;
 	static String civiurl;
 	
@@ -116,6 +120,8 @@ public class WebService {
 						
 			db_name = prop.getProperty( env + "." + DBNAME );
 			db_url  = prop.getProperty( env + "." + DBURL );
+			db_username = prop.getProperty( env + "." + DBUSER_NAME );
+			db_userpassword  = prop.getProperty( env + "." + DBUSER_PASSWORD );
 			sourcesystem = prop.getProperty( env + "." + SOURCE_SYSTEM );
 			civiurl  = prop.getProperty( env + "." + CIVIURL );
 			
@@ -604,7 +610,7 @@ public class WebService {
 
 		String delims = "[,]";
 		String[] tokens = p_ids.split(delims);
-		String where_clause = "";
+		String where_clause = "" ;
 
 		for (int i = 0; i < tokens.length; i++) {
 			logger.info(i + " " + tokens[i]);
@@ -620,7 +626,7 @@ public class WebService {
 
 		logger.info(" where_clause " + where_clause);
 
-		Connection conn = GetConnection.getSimpleConnectionMSSQL(db_url);
+		Connection conn = GetConnection.getSimpleConnectionMSSQL( db_url, db_username, db_userpassword );
 		Statement s;
 
 		try {
@@ -874,7 +880,7 @@ public class WebService {
 	private String sql_test(String p_ids) {
 		System.out.println("p_ids :" + p_ids);
 
-		Connection conn = GetConnection.getSimpleConnectionMSSQL(db_url);
+		Connection conn = GetConnection.getSimpleConnectionMSSQL( db_url, db_username, db_userpassword ) ;
 		Statement s;
 
 		try {
@@ -927,7 +933,7 @@ public class WebService {
 	private String sql_onttree(String p_ids) {
 		System.out.println("p_ids :" + p_ids);
 
-		Connection conn = GetConnection.getSimpleConnectionMSSQL(db_url);
+		Connection conn = GetConnection.getSimpleConnectionMSSQL( db_url, db_username, db_userpassword ) ;
 		Statement s;
 
 		try {
