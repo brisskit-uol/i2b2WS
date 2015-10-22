@@ -1,5 +1,5 @@
 *!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-* NB: Version 1.1 and above are aimed at JBoss version 1.7 and above.
+* This project is aimed at JBoss version 1.7 and above.
 *!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 *==================================================================
@@ -16,7 +16,7 @@
 (2) Within Eclipse, ensure you have the M2_REPO classpath variable set
     to point to your local maven repository (eg: /home/jblogs/.m2/repository) 
 
-(3) Book out this project from svn.
+(3) Clone this project from GitHub
  
 (4) Run the install.sh script, which will set up:
     (a) the Eclipse classpath
@@ -41,11 +41,11 @@
     and this will be its install and deploy coordinates within the repositories.
     In order to run this within a test or live situation, you may need
     to rename the artifact (eg: to i2b2WS.war) to keep the standard URL. 
-(2) Try not to commit class files, jars and wars to SVN.
+(2) Try not to commit class files, jars and wars into your git repo.
 (3) To deploy you will need authority upon the machine hosting the maven repo.
     Best to have a public/private ssh key setup for this.
 (4) The webservice.properties file is an example/test version only.
     The real one exists in the i2b2 install project.
 (5) The web.xml file has a workaround to eliminate errors (in JBoss 1.7.x)
-    that occurr on deployment. You can see the original in the notes folder.
+    that occur on deployment. You can see the original in the notes folder.
     
