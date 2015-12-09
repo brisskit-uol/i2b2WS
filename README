@@ -1,3 +1,9 @@
+*========================================================================
+* This project, acting as a web service, sends PDO (Patient Data Object)
+* files to i2b2 for loading into the i2b2 data warehouse; and then sends 
+* an acknowledgement to CiviCRM on receipt of the patient data
+*========================================================================
+
 *!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 * This project is aimed at JBoss version 1.7 and above.
 *!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

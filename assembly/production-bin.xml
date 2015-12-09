@@ -13,6 +13,12 @@
 		<excludes></excludes>		
 	</dependencySet>
   </dependencySets>
+  <files>
+    <file>
+    	<source>licence.doc</source>
+    	<destName>licence.doc</destName>	
+    </file>
+  </files>
   <fileSets>
     <fileSet>
     	<!-- includes  -->
