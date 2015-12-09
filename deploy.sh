@@ -45,6 +45,7 @@ mvn deploy
 # Ensure the war's lib directory contents is available to the local environment...
 #=================================================================================== 
 mkdir ./target/tmp
+mkdir ./WebContent/WEB-INF/lib >/dev/null 2>/dev/null
 mv ./target/i2b2WS.war ./target/tmp
 cd ./target/tmp/
 unzip i2b2WS.war >/dev/null 2>/dev/null

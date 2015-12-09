@@ -9,7 +9,7 @@
 # (1) Maven 2 must be installed
 # (2) Your maven settings.xml file should be set up to point to the brisskit maven repo.
 #
-# Author: Jeff Lusted (jl99@leicester.ac.uk)
+# Author: Jeff Lusted (jeff.lusted@gmail.com)
 #-----------------------------------------------------------------------------------------------
 
 #===========================================================================
@@ -43,6 +43,7 @@ mvn install
 # Ensure the war's lib directory contents is available to the local environment...
 #=================================================================================== 
 mkdir ./target/tmp
+mkdir ./WebContent/WEB-INF/lib >/dev/null 2>/dev/null
 mv ./target/i2b2WS.war ./target/tmp
 cd ./target/tmp/
 unzip i2b2WS.war >/dev/null 2>/dev/null
