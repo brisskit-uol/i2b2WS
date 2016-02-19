@@ -48,8 +48,8 @@
     In order to run this within a test or live situation, you may need
     to rename the artifact (eg: to i2b2WS.war) to keep the standard URL. 
 (2) Try not to commit class files, jars and wars into your git repo.
-(3) To deploy you will need authority upon the machine hosting the maven repo.
-    Best to have a public/private ssh key setup for this.
+(3) To deploy you will need requisite admin credentials in your maven 
+    settings.xml file. 
 (4) The webservice.properties file is an example/test version only.
     The real one exists in the i2b2 install project.
 (5) The web.xml file has a workaround to eliminate errors (in JBoss 1.7.x)
